@@ -6,3 +6,8 @@ export type ObjectItem = {
   class: string;
   size?: string;
 };
+
+export type ExplorerItem = {
+  path: string;
+  objects: ObjectItem[];
+};
