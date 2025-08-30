@@ -8,6 +8,10 @@
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
   },
+  "files.associations": {
+    "*.css": "tailwindcss",
+    "*.scss": "tailwindcss"
+  },
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
