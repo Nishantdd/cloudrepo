@@ -14,5 +14,9 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   const { path } = Route.useSearch();
   const currentData = data.find((items) => items.path === path)?.objects || [];
-  return <DataTable columns={columns} data={currentData} />;
+  return (
+    <div className="flex flex-1 py-4 px-8">
+      <DataTable columns={columns} data={currentData} />
+    </div>
+  );
 }
