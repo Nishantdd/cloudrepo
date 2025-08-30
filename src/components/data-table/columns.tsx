@@ -1,5 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import type { ObjectItem } from "@/types/s3";
+import { Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
@@ -54,9 +55,16 @@ export const columns: ColumnDef<ObjectItem>[] = [
       const item = row.original;
       if (item.type === "folder") {
         return (
-          <a href={`/${item.name}`} className="text-blue-600 hover:underline">
+          <Link
+            to="/"
+            search={(prevSearch) => ({
+              ...prevSearch,
+              path: `${prevSearch.path ?? ""}/${item.name}`,
+            })}
+            className="text-blue-600 hover:underline"
+          >
             {item.name}
-          </a>
+          </Link>
         );
       }
       return <span>{item.name}</span>;
