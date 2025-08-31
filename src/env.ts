@@ -6,12 +6,13 @@ export const env = createEnv({
    * The prefix that client-side variables must have. This is enforced both at
    * a type-level and at runtime.
    */
-  clientPrefix: "",
+  clientPrefix: "VITE_",
 
   client: {
-    ACCESS_KEY: z.string().min(1),
-    SECRET_ACCESS_KEY: z.string().min(1),
-    BUCKET_NAME: z.string().min(1),
+    VITE_ACCESS_KEY: z.string().min(1),
+    VITE_SECRET_ACCESS_KEY: z.string().min(1),
+    VITE_BUCKET_NAME: z.string().min(1),
+    VITE_BUCKET_REGION: z.string().min(1),
   },
 
   /**
