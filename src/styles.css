@@ -14,7 +14,7 @@ body {
 }
 
 @theme {
-    --animate-spin-slow: spin 1.5s linear infinite;
+  --animate-spin-slow: spin 1.5s linear infinite;
 }
 
 code {

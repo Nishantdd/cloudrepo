@@ -20,11 +20,15 @@ function RouteComponent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const d = await getS3Objects("");
-      setData(d);
-      setLoading(false);
-    };
+    const fetchData = async () =>
+      await getS3Objects("")
+        .then((data) => {
+          console.log(data);
+          setData(data);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+
     fetchData();
   }, []);
 
@@ -33,7 +37,7 @@ function RouteComponent() {
     [data, path],
   );
 
-  if(loading) return <Loading />
+  if (loading) return <Loading />;
 
   return (
     <div className="flex flex-1 py-4 px-8">

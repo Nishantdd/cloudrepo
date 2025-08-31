@@ -7,7 +7,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 export const Route = createRootRoute({
   component: () => (
     <>
-      <Navbar bucketName={env.VITE_BUCKET_NAME}/>
+      <Navbar bucketName={env.VITE_BUCKET_NAME} />
       <Outlet />
       <TanstackDevtools
         config={{
