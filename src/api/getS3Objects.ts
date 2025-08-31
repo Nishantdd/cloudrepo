@@ -24,9 +24,9 @@ const toISO = (d: Date | undefined) => {
   }
 };
 
-export default async function getS3Objects(
-  path: string,
-): Promise<ExplorerItem[]> {
+export default async function getExplorerItemsFromS3(): Promise<
+  ExplorerItem[]
+> {
   const bucketName = env.VITE_BUCKET_NAME;
   const bucketRegion = env.VITE_BUCKET_REGION;
 
@@ -46,7 +46,6 @@ export default async function getS3Objects(
     .send(
       new ListObjectsV2Command({
         Bucket: bucketName,
-        Prefix: path,
       }),
     )
     .then((response) => {
