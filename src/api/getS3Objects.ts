@@ -1,28 +1,11 @@
 import { env } from "@/env";
+import { formatDate, toISO } from "@/lib/helpers";
 import type { ExplorerItem, ObjectItem } from "@/types/s3";
 import {
   ListObjectsV2Command,
   S3Client,
   type _Object,
 } from "@aws-sdk/client-s3";
-
-const formatBytes = (bytes?: number | null) => {
-  if (!bytes || bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
-};
-
-const toISO = (d: Date | undefined) => {
-  if (!d) return "";
-  if (d instanceof Date) return d.toISOString();
-  try {
-    return new Date(d).toISOString();
-  } catch {
-    return String(d);
-  }
-};
 
 export default async function getExplorerItemsFromS3(): Promise<
   ExplorerItem[]
@@ -89,7 +72,7 @@ export default async function getExplorerItemsFromS3(): Promise<
               type: "folder",
               lastModified: "",
               timestamp: "",
-              class: "dir",
+              class: "",
             };
 
             const parentBucket = map.get(parentPath);
@@ -118,7 +101,7 @@ export default async function getExplorerItemsFromS3(): Promise<
                 type: "folder",
                 lastModified: "",
                 timestamp: "",
-                class: "dir",
+                class: "",
               };
 
               const parentBucket = map.get(parentPath);
@@ -141,19 +124,14 @@ export default async function getExplorerItemsFromS3(): Promise<
           ensurePath(parentPath);
 
           const name = segments[segments.length - 1];
-          const extMatch = name.match(/\.([^.]+)$/);
-          const ext = extMatch ? extMatch[1].toLowerCase() : "file";
 
           const fileEntry: ObjectItem = {
             name,
             type: "file",
-            lastModified: toISO(item.LastModified),
+            lastModified: formatDate(item.LastModified),
             timestamp: toISO(item.LastModified),
-            class: ext,
-            size:
-              typeof item.Size === "number"
-                ? formatBytes(item.Size)
-                : undefined,
+            class: item?.StorageClass || "Unknown",
+            size: item.Size,
           };
 
           const parentBucket = map.get(parentPath);

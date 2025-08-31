@@ -4,7 +4,7 @@ export type ObjectItem = {
   lastModified: string;
   timestamp: string;
   class: string;
-  size?: string;
+  size?: number;
 };
 
 export type ExplorerItem = {

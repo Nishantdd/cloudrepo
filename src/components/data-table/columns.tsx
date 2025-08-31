@@ -1,4 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { formatBytes } from "@/lib/helpers";
 import type { ObjectItem } from "@/types/s3";
 import { Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -95,26 +96,7 @@ export const columns: ColumnDef<ObjectItem>[] = [
   },
   {
     accessorKey: "lastModified",
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(isSorted === "asc")}
-        >
-          Last Modified
-          {isSorted ? (
-            isSorted === "asc" ? (
-              <ArrowUp />
-            ) : (
-              <ArrowDown />
-            )
-          ) : (
-            <ArrowUpDown />
-          )}
-        </Button>
-      );
-    },
+    header: "Last Modified",
   },
   {
     accessorKey: "timestamp",
@@ -164,6 +146,10 @@ export const columns: ColumnDef<ObjectItem>[] = [
           )}
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const size = row.getValue("size") as number | undefined;
+      return <span>{formatBytes(size)}</span>;
     },
   },
 ];
