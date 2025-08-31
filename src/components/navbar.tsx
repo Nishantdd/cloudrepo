@@ -25,7 +25,7 @@ export default function Navbar({
       >
         <div className="flex items-center gap-1">
           <img
-            src="/public/logo.svg"
+            src="/logo.svg"
             alt="logo"
             width={24}
             height={24}

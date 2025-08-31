@@ -63,7 +63,7 @@ export const columns: ColumnDef<ObjectItem>[] = [
             })}
             className="text-blue-600 hover:underline"
           >
-            {item.name}
+            {item.name}/
           </Link>
         );
       }
