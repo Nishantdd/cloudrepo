@@ -56,11 +56,11 @@ function RouteComponent() {
         <BreadcrumbList>
           <BreadcrumbItem>
             {segments.length === 0 ? (
-              <BreadcrumbPage>Root</BreadcrumbPage>
+              <BreadcrumbPage>Home</BreadcrumbPage>
             ) : (
               <BreadcrumbLink asChild>
                 <Link to="/" search={(prev) => ({ ...prev, path: "" })}>
-                  Root
+                  /
                 </Link>
               </BreadcrumbLink>
             )}
