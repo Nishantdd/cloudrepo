@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import { env } from "@/env";
 import { TanstackDevtools } from "@tanstack/react-devtools";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -6,7 +7,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 export const Route = createRootRoute({
   component: () => (
     <>
-      <Navbar />
+      <Navbar bucketName={env.VITE_BUCKET_NAME}/>
       <Outlet />
       <TanstackDevtools
         config={{
