@@ -39,15 +39,16 @@ function RouteComponent() {
     fetchData();
   }, []);
 
-  const currentData = useMemo(
-    () => data?.find((items) => items.path === path)?.objects || [],
-    [data, path],
-  );
-
-  const segments = useMemo(() => {
+  const { trimmed, segments } = useMemo(() => {
     const trimmed = path.replace(/^\/+|\/+$/g, "");
-    return trimmed === "" ? [] : trimmed.split("/");
+    const segments = trimmed === "" ? [] : trimmed.split("/");
+    return { trimmed, segments };
   }, [path]);
+
+  const currentData = useMemo(
+    () => data?.find((items) => items.path === trimmed)?.objects || [],
+    [data, trimmed],
+  );
 
   if (loading) return <Loading />;
 

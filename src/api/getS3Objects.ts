@@ -59,11 +59,11 @@ export default async function getExplorerItemsFromS3(): Promise<
           // For folder keys (ending with /) — create folder entries for each prefix
           for (let i = 0; i < segments.length; i++) {
             const folderSegments = segments.slice(0, i + 1);
-            const folderPath = `/${folderSegments.join("/")}`; // folder path
+            const folderPath = folderSegments.join("/"); // folder path
             ensurePath(folderPath);
 
             const parentPath =
-              i === 0 ? "" : `/${folderSegments.slice(0, i).join("/")}`;
+              i === 0 ? "" : folderSegments.slice(0, i).join("/");
             ensurePath(parentPath);
 
             const folderName = folderSegments[folderSegments.length - 1];
@@ -88,11 +88,12 @@ export default async function getExplorerItemsFromS3(): Promise<
           if (segments.length > 1) {
             for (let i = 0; i < segments.length - 1; i++) {
               const folderSegments = segments.slice(0, i + 1);
-              const folderPath = `/${folderSegments.join("/")}`;
+              // Changed: remove leading slash from folderPath
+              const folderPath = folderSegments.join("/");
               ensurePath(folderPath);
 
               const parentPath =
-                i === 0 ? "" : `/${folderSegments.slice(0, i).join("/")}`;
+                i === 0 ? "" : folderSegments.slice(0, i).join("/");
               ensurePath(parentPath);
 
               const folderName = folderSegments[folderSegments.length - 1];
@@ -119,7 +120,7 @@ export default async function getExplorerItemsFromS3(): Promise<
           // Add file into immediate parent
           const parentPath =
             segments.length > 1
-              ? `/${segments.slice(0, segments.length - 1).join("/")}`
+              ? segments.slice(0, segments.length - 1).join("/")
               : "";
           ensurePath(parentPath);
 
