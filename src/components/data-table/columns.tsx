@@ -37,6 +37,7 @@ export const columns: ColumnDef<ObjectItem>[] = [
       return (
         <Button
           variant="ghost"
+          className="justify-start px-0!"
           onClick={() => column.toggleSorting(isSorted === "asc")}
         >
           Object
@@ -78,6 +79,7 @@ export const columns: ColumnDef<ObjectItem>[] = [
       return (
         <Button
           variant="ghost"
+          className="justify-start px-0!"
           onClick={() => column.toggleSorting(isSorted === "asc")}
         >
           Type
@@ -105,6 +107,7 @@ export const columns: ColumnDef<ObjectItem>[] = [
       return (
         <Button
           variant="ghost"
+          className="justify-start px-0!"
           onClick={() => column.toggleSorting(isSorted === "asc")}
         >
           Timestamp
@@ -132,6 +135,7 @@ export const columns: ColumnDef<ObjectItem>[] = [
       return (
         <Button
           variant="ghost"
+          className="justify-start px-0!"
           onClick={() => column.toggleSorting(isSorted === "asc")}
         >
           Size
