@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import type { ExplorerItem } from "@/types/s3";
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { Folder, Home } from "lucide-react";
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 
@@ -56,11 +57,13 @@ function RouteComponent() {
         <BreadcrumbList>
           <BreadcrumbItem>
             {segments.length === 0 ? (
-              <BreadcrumbPage>Home</BreadcrumbPage>
+              <BreadcrumbPage>
+                <Home className="h-4 w-4" />
+              </BreadcrumbPage>
             ) : (
               <BreadcrumbLink asChild>
                 <Link to="/" search={(prev) => ({ ...prev, path: "" })}>
-                  /
+                  <Home className="h-4 w-4" />
                 </Link>
               </BreadcrumbLink>
             )}
@@ -74,15 +77,21 @@ function RouteComponent() {
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   {isLast ? (
-                    <BreadcrumbPage>{seg}</BreadcrumbPage>
+                    <>
+                      <Folder className="h-4 w-4 text-foreground" />
+                      <BreadcrumbPage>{seg}</BreadcrumbPage>
+                    </>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link
-                        to="/"
-                        search={(prev) => ({ ...prev, path: prefix })}
-                      >
-                        {seg}
-                      </Link>
+                      <>
+                        <Folder className="h-4 w-4" />
+                        <Link
+                          to="/"
+                          search={(prev) => ({ ...prev, path: prefix })}
+                        >
+                          {seg}
+                        </Link>
+                      </>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
