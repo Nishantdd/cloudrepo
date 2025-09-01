@@ -20,7 +20,7 @@ export default function Navbar({
   return (
     <header className="w-full border-b bg-background">
       <nav
-        className="mx-auto flex h-14 items-center justify-between px-4"
+        className="mx-4 flex h-14 items-center justify-between px-4"
         aria-label="Main navigation"
       >
         <div className="flex items-center gap-1">
