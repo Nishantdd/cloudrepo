@@ -1,4 +1,4 @@
-"use client";
+import * as React from "react";
 
 import {
   type ColumnDef,
@@ -11,7 +11,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import * as React from "react";
 
 import {
   ArrowDownToLine,
@@ -33,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import getS3Blob from "@/api/getS3Blob";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,6 +56,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { ObjectItem } from "@/types/s3";
+import JSZip from "jszip";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -102,6 +104,56 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const downloadSelectedItems = async () => {
+    const selectedRows = table.getSelectedRowModel().rows;
+    const originalRows: ObjectItem[] =
+      selectedRows.length > 0
+        ? (selectedRows.map((row) => row.original) as ObjectItem[])
+        : [];
+
+    try {
+      const entries = await Promise.all(
+        originalRows.map(async (item) => {
+          const key = path.length ? `${path}/${item.name}` : `${item.name}`;
+          const blob = await getS3Blob(key);
+          return { name: item.name, blob };
+        }),
+      );
+
+      if (entries.length === 1) {
+        const { name, blob } = entries[0];
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return;
+      }
+
+      const zip = new JSZip();
+      for (const entry of entries) {
+        zip.file(entry.name, entry.blob);
+      }
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const zipName = `download-${new Date().toISOString().split("T")[0]}.zip`;
+      const zipUrl = URL.createObjectURL(zipBlob);
+      const link = document.createElement("a");
+      link.href = zipUrl;
+      link.download = zipName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(zipUrl), 2000);
+    } catch (err) {
+      console.error("Download failed:", err);
+      alert("Failed to download files. See console for details.");
+    }
+  };
 
   const deleteSelectedItems = () => {
     const selectedRows = table.getSelectedRowModel().rows;
@@ -197,6 +249,7 @@ export function DataTable<TData, TValue>({
           <Button
             variant="outline"
             className="rounded-none shadow-none focus-visible:z-10"
+            onClick={downloadSelectedItems}
             disabled={Object.keys(rowSelection).length === 0}
           >
             <ArrowDownToLine />

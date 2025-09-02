@@ -2,10 +2,7 @@ import { env } from "@/env";
 import { formatDate, toISO } from "@/lib/helpers";
 import { s3Client } from "@/lib/s3";
 import type { ExplorerItem, ObjectItem } from "@/types/s3";
-import {
-  ListObjectsV2Command,
-  type _Object,
-} from "@aws-sdk/client-s3";
+import { ListObjectsV2Command, type _Object } from "@aws-sdk/client-s3";
 
 export default async function listExplorerItemsFromS3(): Promise<
   ExplorerItem[]
