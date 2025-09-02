@@ -1,9 +1,9 @@
 import { env } from "@/env";
 import { formatDate, toISO } from "@/lib/helpers";
+import { s3Client } from "@/lib/s3";
 import type { ExplorerItem, ObjectItem } from "@/types/s3";
 import {
   ListObjectsV2Command,
-  S3Client,
   type _Object,
 } from "@aws-sdk/client-s3";
 
@@ -11,21 +11,8 @@ export default async function listExplorerItemsFromS3(): Promise<
   ExplorerItem[]
 > {
   const bucketName = env.VITE_BUCKET_NAME;
-  const bucketRegion = env.VITE_BUCKET_REGION;
 
-  if (!bucketName) {
-    throw new Error("BUCKET_NAME environment variable not defined.");
-  }
-
-  const s3 = new S3Client({
-    region: bucketRegion,
-    credentials: {
-      accessKeyId: env.VITE_ACCESS_KEY,
-      secretAccessKey: env.VITE_SECRET_ACCESS_KEY,
-    },
-  });
-
-  return s3
+  return s3Client
     .send(
       new ListObjectsV2Command({
         Bucket: bucketName,
