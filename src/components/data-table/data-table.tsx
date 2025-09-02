@@ -35,6 +35,7 @@ import {
 
 import deleteS3Object from "@/api/deleteS3Object";
 import getS3Blob from "@/api/getS3Blob";
+import uploadFileToS3 from "@/api/uploadFileToS3";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -110,6 +111,47 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const handleAddFiles = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.onchange = async () => {
+      if (input.files) {
+        const files = Array.from(input.files);
+        for (const file of files) {
+          try {
+            await uploadFileToS3(path, file);
+          } catch (err) {
+            console.error("File upload failed:", file.name, err);
+          }
+        }
+        await updateData();
+      }
+    };
+    input.click();
+  };
+
+  const handleAddFolders = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.setAttribute("webkitdirectory", "true");
+    input.onchange = async () => {
+      if (input.files) {
+        const files = Array.from(input.files);
+        for (const file of files) {
+          try {
+            await uploadFileToS3(path, file);
+          } catch (err) {
+            console.error("Folder file upload failed:", file.name, err);
+          }
+        }
+        await updateData();
+      }
+    };
+    input.click();
+  };
 
   const downloadSelectedItems = async () => {
     setStateMessage((prev) => ({ ...prev, downloadMessage: "Downloading" }));
@@ -251,7 +293,7 @@ export function DataTable<TData, TValue>({
               <Button
                 variant="outline"
                 className="rounded-none rounded-s-md shadow-none focus-visible:z-10"
-                onClick={() => console.log("Add File (Default Action)")}
+                onClick={(e) => e.preventDefault()}
                 disabled={
                   Boolean(stateMessage.deleteMessage) ||
                   Boolean(stateMessage.downloadMessage)
@@ -262,15 +304,11 @@ export function DataTable<TData, TValue>({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem
-                onSelect={() => console.log("Add File selected")}
-              >
+              <DropdownMenuItem onSelect={handleAddFiles}>
                 <File />
                 File
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => console.log("Add Folder selected")}
-              >
+              <DropdownMenuItem onSelect={handleAddFolders}>
                 <Folder />
                 Folder
               </DropdownMenuItem>
