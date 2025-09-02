@@ -102,7 +102,7 @@ function RouteComponent() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <DataTable columns={columns} data={currentData} />
+      <DataTable columns={columns} data={currentData} path={trimmed} />
     </div>
   );
 }

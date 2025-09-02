@@ -18,6 +18,11 @@ import {
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Copy,
+  Delete,
+  Search,
+  SquarePen,
+  Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,22 +52,27 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  path: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  path,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 5,
   });
+
+  const [selectedColumn, setSelectedColumn] = React.useState("name");
 
   const table = useReactTable({
     data,
@@ -70,11 +80,13 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       columnFilters,
+      rowSelection,
       globalFilter,
       pagination,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -85,15 +97,56 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full space-y-4 mt-4">
-      <div className="flex items-center">
-        <Input
-          placeholder="Filter objects..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+      <div className="flex items-center justify-between">
+        <div className="w-full max-w-xs space-y-2">
+          <div className="flex rounded-md shadow-xs relative">
+            <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+              <Search className="size-4" />
+              <span className="sr-only">Search</span>
+            </div>
+            <Input
+              placeholder="Filter objects..."
+              value={
+                (table.getColumn(selectedColumn)?.getFilterValue() as string) ??
+                ""
+              }
+              onChange={(event) =>
+                table
+                  .getColumn(selectedColumn)
+                  ?.setFilterValue(event.target.value)
+              }
+              className="peer px-9 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none -me-px rounded-e-none shadow-none focus-visible:z-1"
+            />
+            <Select value={selectedColumn} onValueChange={setSelectedColumn}>
+              <SelectTrigger className="rounded-s-none shadow-none">
+                <SelectValue placeholder="Select column" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name" className="pr-2 [&_svg]:hidden">
+                  Object
+                </SelectItem>
+                <SelectItem value="type" className="pr-2 [&_svg]:hidden">
+                  Type
+                </SelectItem>
+                <SelectItem
+                  value="lastModified"
+                  className="pr-2 [&_svg]:hidden"
+                >
+                  Last Modified
+                </SelectItem>
+                <SelectItem value="timestamp" className="pr-2 [&_svg]:hidden">
+                  Timestamp
+                </SelectItem>
+                <SelectItem value="class" className="pr-2 [&_svg]:hidden">
+                  Class
+                </SelectItem>
+                <SelectItem value="size" className="pr-2 [&_svg]:hidden">
+                  Size
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-md border [&>div]:max-h-[70vh]">
