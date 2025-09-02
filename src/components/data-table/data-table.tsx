@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 
 import {
   type ColumnDef,
@@ -20,6 +20,7 @@ import {
   ChevronRightIcon,
   File,
   Folder,
+  Loader2,
   Plus,
   Search,
   Trash2,
@@ -71,19 +72,21 @@ export function DataTable<TData, TValue>({
   data,
   path,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [globalFilter, setGlobalFilter] = React.useState("");
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [rowSelection, setRowSelection] = useState({});
 
-  const [pagination, setPagination] = React.useState({
+  const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 5,
   });
 
-  const [selectedColumn, setSelectedColumn] = React.useState("name");
+  const [selectedColumn, setSelectedColumn] = useState("name");
+  const [stateMessage, setStateMessage] = useState({
+    downloadMessage: "",
+    deleteMessage: "",
+  });
 
   const table = useReactTable({
     data,
@@ -107,6 +110,7 @@ export function DataTable<TData, TValue>({
   });
 
   const downloadSelectedItems = async () => {
+    setStateMessage((prev) => ({ ...prev, downloadMessage: "Downloading" }));
     const selectedRows = table.getSelectedRowModel().rows;
     const originalRows: ObjectItem[] =
       selectedRows.length > 0
@@ -132,8 +136,11 @@ export function DataTable<TData, TValue>({
         link.click();
         link.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setStateMessage((prev) => ({ ...prev, downloadMessage: "" }));
         return;
       }
+
+      setStateMessage((prev) => ({ ...prev, downloadMessage: "Zipping" }));
 
       const zip = new JSZip();
       for (const entry of entries) {
@@ -153,10 +160,13 @@ export function DataTable<TData, TValue>({
     } catch (err) {
       console.error("Download failed:", err);
       alert("Failed to download files. See console for details.");
+    } finally {
+      setStateMessage((prev) => ({ ...prev, downloadMessage: "" }));
     }
   };
 
   const deleteSelectedItems = async () => {
+    setStateMessage((prev) => ({ ...prev, deleteMessage: "Deleting" }));
     const selectedRows = table.getSelectedRowModel().rows;
     const originalRows: ObjectItem[] =
       selectedRows.length > 0
@@ -175,6 +185,8 @@ export function DataTable<TData, TValue>({
     } catch (err) {
       console.error("Deletion failed:", err);
       alert("Failed to delete selected items. See console for details.");
+    } finally {
+      setStateMessage((prev) => ({ ...prev, deleteMessage: "" }));
     }
   };
 
@@ -238,6 +250,10 @@ export function DataTable<TData, TValue>({
                 variant="outline"
                 className="rounded-none rounded-s-md shadow-none focus-visible:z-10"
                 onClick={() => console.log("Add File (Default Action)")}
+                disabled={
+                  Boolean(stateMessage.deleteMessage) ||
+                  Boolean(stateMessage.downloadMessage)
+                }
               >
                 <Plus />
                 Add
@@ -263,20 +279,46 @@ export function DataTable<TData, TValue>({
             variant="outline"
             className="rounded-none shadow-none focus-visible:z-10"
             onClick={downloadSelectedItems}
-            disabled={Object.keys(rowSelection).length === 0}
+            disabled={
+              Object.keys(rowSelection).length === 0 ||
+              Boolean(stateMessage.downloadMessage) ||
+              Boolean(stateMessage.deleteMessage)
+            }
           >
-            <ArrowDownToLine />
-            Download
+            {stateMessage.downloadMessage ? (
+              <>
+                <Loader2 className="animate-spin" />
+                {stateMessage.downloadMessage}
+              </>
+            ) : (
+              <>
+                <ArrowDownToLine />
+                Download
+              </>
+            )}
           </Button>
 
           <Button
             variant="outline"
             className="rounded-none rounded-e-md shadow-none focus-visible:z-10"
-            disabled={Object.keys(rowSelection).length === 0}
             onClick={deleteSelectedItems}
+            disabled={
+              Object.keys(rowSelection).length === 0 ||
+              Boolean(stateMessage.deleteMessage) ||
+              Boolean(stateMessage.downloadMessage)
+            }
           >
-            <Trash2 />
-            Delete
+            {stateMessage.deleteMessage ? (
+              <>
+                <Loader2 className="animate-spin" />
+                {stateMessage.deleteMessage}
+              </>
+            ) : (
+              <>
+                <Trash2 />
+                Delete
+              </>
+            )}
           </Button>
         </div>
       </div>
