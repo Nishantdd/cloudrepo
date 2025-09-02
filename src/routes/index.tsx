@@ -1,4 +1,4 @@
-import getExplorerItemsFromS3 from "@/api/getS3Objects";
+import listExplorerItemsFromS3 from "@/api/listS3Objects";
 import { columns } from "@/components/data-table/columns";
 import { DataTable } from "@/components/data-table/data-table";
 import { Loading } from "@/components/loading";
@@ -31,7 +31,7 @@ function RouteComponent() {
 
   useEffect(() => {
     const fetchData = async () =>
-      await getExplorerItemsFromS3()
+      await listExplorerItemsFromS3()
         .then((data) => setData(data))
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));

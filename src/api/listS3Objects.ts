@@ -7,7 +7,7 @@ import {
   type _Object,
 } from "@aws-sdk/client-s3";
 
-export default async function getExplorerItemsFromS3(): Promise<
+export default async function listExplorerItemsFromS3(): Promise<
   ExplorerItem[]
 > {
   const bucketName = env.VITE_BUCKET_NAME;

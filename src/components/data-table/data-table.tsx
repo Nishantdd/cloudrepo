@@ -14,16 +14,24 @@ import {
 import * as React from "react";
 
 import {
+  ArrowDownToLine,
   ChevronFirstIcon,
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  Copy,
-  Delete,
+  File,
+  Folder,
+  Plus,
   Search,
-  SquarePen,
   Trash2,
 } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,6 +103,16 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const deleteSelectedItems = () => {
+    const selectedRows = table.getSelectedRowModel().rows;
+    const originalRows =
+      selectedRows.length > 0
+        ? selectedRows.map((row) => row.original)
+        : table.getFilteredRowModel().rows.map((row) => row.original);
+
+    console.log(originalRows);
+  };
+
   return (
     <div className="w-full space-y-4 mt-4">
       <div className="flex items-center justify-between">
@@ -146,6 +164,54 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        <div className="inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="rounded-none rounded-s-md shadow-none focus-visible:z-10"
+                onClick={() => console.log("Add File (Default Action)")}
+              >
+                <Plus />
+                Add
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem
+                onSelect={() => console.log("Add File selected")}
+              >
+                <File />
+                File
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => console.log("Add Folder selected")}
+              >
+                <Folder />
+                Folder
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button
+            variant="outline"
+            className="rounded-none shadow-none focus-visible:z-10"
+            disabled={Object.keys(rowSelection).length === 0}
+          >
+            <ArrowDownToLine />
+            Download
+          </Button>
+
+          <Button
+            variant="outline"
+            className="rounded-none rounded-e-md shadow-none focus-visible:z-10"
+            disabled={Object.keys(rowSelection).length === 0}
+            onClick={deleteSelectedItems}
+          >
+            <Trash2 />
+            Delete
+          </Button>
         </div>
       </div>
 
