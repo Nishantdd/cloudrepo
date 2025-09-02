@@ -14,7 +14,7 @@ import type { ExplorerItem } from "@/types/s3";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Folder, Home } from "lucide-react";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search) => ({
@@ -49,6 +49,12 @@ function RouteComponent() {
     () => data?.find((items) => items.path === trimmed)?.objects || [],
     [data, trimmed],
   );
+
+  const updateCurrentData = useCallback(async () => {
+    await listExplorerItemsFromS3()
+      .then((data) => setData(data))
+      .catch((err) => console.log(err));
+  }, []);
 
   if (loading) return <Loading />;
 
@@ -102,7 +108,12 @@ function RouteComponent() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <DataTable columns={columns} data={currentData} path={trimmed} />
+      <DataTable
+        columns={columns}
+        data={currentData}
+        path={trimmed}
+        updateData={updateCurrentData}
+      />
     </div>
   );
 }

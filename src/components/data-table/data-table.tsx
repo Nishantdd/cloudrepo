@@ -65,12 +65,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   path: string;
+  updateData: () => Promise<void>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   path,
+  updateData,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -181,7 +183,7 @@ export function DataTable<TData, TValue>({
         }),
       );
 
-      alert("Successfully deleted selected items.");
+      await updateData();
     } catch (err) {
       console.error("Deletion failed:", err);
       alert("Failed to delete selected items. See console for details.");
