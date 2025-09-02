@@ -32,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import deleteS3Object from "@/api/deleteS3Object";
 import getS3Blob from "@/api/getS3Blob";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -155,14 +156,26 @@ export function DataTable<TData, TValue>({
     }
   };
 
-  const deleteSelectedItems = () => {
+  const deleteSelectedItems = async () => {
     const selectedRows = table.getSelectedRowModel().rows;
-    const originalRows =
+    const originalRows: ObjectItem[] =
       selectedRows.length > 0
-        ? selectedRows.map((row) => row.original)
-        : table.getFilteredRowModel().rows.map((row) => row.original);
+        ? (selectedRows.map((row) => row.original) as ObjectItem[])
+        : [];
 
-    console.log(originalRows);
+    try {
+      await Promise.all(
+        originalRows.map(async (item) => {
+          const key = path.length ? `${path}/${item.name}` : `${item.name}`;
+          await deleteS3Object(key);
+        }),
+      );
+
+      alert("Successfully deleted selected items.");
+    } catch (err) {
+      console.error("Deletion failed:", err);
+      alert("Failed to delete selected items. See console for details.");
+    }
   };
 
   return (
