@@ -87,6 +87,7 @@ export function DataTable<TData, TValue>({
 
   const [selectedColumn, setSelectedColumn] = useState("name");
   const [stateMessage, setStateMessage] = useState({
+    addMessage: "",
     downloadMessage: "",
     deleteMessage: "",
   });
@@ -120,6 +121,10 @@ export function DataTable<TData, TValue>({
       if (input.files) {
         const files = Array.from(input.files);
         for (const file of files) {
+          setStateMessage((prev) => ({
+            ...prev,
+            addMessage: `Uploading ${file.name}`,
+          }));
           try {
             await uploadFileToS3(path, file);
           } catch (err) {
@@ -127,6 +132,7 @@ export function DataTable<TData, TValue>({
           }
         }
         await updateData();
+        setStateMessage((prev) => ({ ...prev, addMessage: "" }));
       }
     };
     input.click();
@@ -141,6 +147,10 @@ export function DataTable<TData, TValue>({
       if (input.files) {
         const files = Array.from(input.files);
         for (const file of files) {
+          setStateMessage((prev) => ({
+            ...prev,
+            addMessage: `Uploading ${file.name}`,
+          }));
           try {
             await uploadFileToS3(path, file);
           } catch (err) {
@@ -148,6 +158,7 @@ export function DataTable<TData, TValue>({
           }
         }
         await updateData();
+        setStateMessage((prev) => ({ ...prev, addMessage: "" }));
       }
     };
     input.click();
@@ -292,15 +303,23 @@ export function DataTable<TData, TValue>({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="rounded-none rounded-s-md shadow-none focus-visible:z-10"
-                onClick={(e) => e.preventDefault()}
-                disabled={
-                  Boolean(stateMessage.deleteMessage) ||
-                  Boolean(stateMessage.downloadMessage)
-                }
+                className="max-w-sm rounded-none rounded-s-md shadow-none focus-visible:z-10"
+                disabled={Object.values(stateMessage).some(Boolean)}
+                onClick={handleAddFiles}
               >
-                <Plus />
-                Add
+                {stateMessage.addMessage ? (
+                  <>
+                    <Loader2 className="animate-spin" />
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                      {stateMessage.addMessage}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Plus />
+                    Add
+                  </>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
@@ -321,8 +340,7 @@ export function DataTable<TData, TValue>({
             onClick={downloadSelectedItems}
             disabled={
               Object.keys(rowSelection).length === 0 ||
-              Boolean(stateMessage.downloadMessage) ||
-              Boolean(stateMessage.deleteMessage)
+              Object.values(stateMessage).some(Boolean)
             }
           >
             {stateMessage.downloadMessage ? (
@@ -344,8 +362,7 @@ export function DataTable<TData, TValue>({
             onClick={deleteSelectedItems}
             disabled={
               Object.keys(rowSelection).length === 0 ||
-              Boolean(stateMessage.deleteMessage) ||
-              Boolean(stateMessage.downloadMessage)
+              Object.values(stateMessage).some(Boolean)
             }
           >
             {stateMessage.deleteMessage ? (

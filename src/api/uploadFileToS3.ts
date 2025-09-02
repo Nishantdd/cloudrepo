@@ -7,10 +7,13 @@ export default async function uploadFileToS3(
   file: File,
 ): Promise<string> {
   const bucketName = env.VITE_BUCKET_NAME;
-  
+
   let key = "";
   if (file.webkitRelativePath) {
-    key = path.length === 0 ? file.webkitRelativePath : `${path}/${file.webkitRelativePath}`; 
+    key =
+      path.length === 0
+        ? file.webkitRelativePath
+        : `${path}/${file.webkitRelativePath}`;
   } else {
     key = path.length === 0 ? file.name : `${path}/${file.name}`;
   }
