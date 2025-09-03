@@ -139,4 +139,8 @@ code {
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
 }
