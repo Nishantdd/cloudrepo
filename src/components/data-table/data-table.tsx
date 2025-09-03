@@ -234,6 +234,10 @@ export function DataTable<TData, TValue>({
     try {
       await Promise.all(
         originalRows.map(async (item) => {
+          setStateMessage((prev) => ({
+            ...prev,
+            deleteMessage: `Deleting ${item.name}`,
+          }));
           const key = path.length ? `${path}/${item.name}` : `${item.name}`;
           await deleteS3Object(key);
         }),
@@ -361,7 +365,7 @@ export function DataTable<TData, TValue>({
 
           <Button
             variant="outline"
-            className="rounded-none rounded-e-md shadow-none focus-visible:z-10"
+            className="max-w-sm rounded-none rounded-e-md shadow-none focus-visible:z-10"
             onClick={deleteSelectedItems}
             disabled={
               Object.keys(rowSelection).length === 0 ||
@@ -371,7 +375,9 @@ export function DataTable<TData, TValue>({
             {stateMessage.deleteMessage ? (
               <>
                 <Loader2 className="animate-spin" />
-                {stateMessage.deleteMessage}
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {stateMessage.deleteMessage}
+                </span>
               </>
             ) : (
               <>
