@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   type ColumnDef,
@@ -112,6 +112,9 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: table depends on data
+  useEffect(() => table.resetRowSelection(true), [data]);
 
   const handleAddFiles = async () => {
     const input = document.createElement("input");
