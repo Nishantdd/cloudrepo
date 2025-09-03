@@ -17,5 +17,5 @@ export default async function getS3Blob(key: string): Promise<Blob> {
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: I expect it to work
-  return await new Response(response.Body as any).blob();
+  return new Response(response.Body as any).blob();
 }
