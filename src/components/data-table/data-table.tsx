@@ -61,6 +61,7 @@ import {
 } from "@/components/ui/table";
 import type { ObjectItem } from "@/types/s3";
 import JSZip from "jszip";
+import deleteS3ObjectsWithAPrefix from "@/api/deleteS3ObjectsFromPrefix";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -238,8 +239,14 @@ export function DataTable<TData, TValue>({
             ...prev,
             deleteMessage: `Deleting ${item.name}`,
           }));
-          const key = path.length ? `${path}/${item.name}` : `${item.name}`;
-          await deleteS3Object(key);
+
+          const keyOrPrefix = path.length
+            ? `${path}/${item.name}`
+            : `${item.name}`;
+
+          item.type === "file"
+            ? await deleteS3Object(keyOrPrefix)
+            : await deleteS3ObjectsWithAPrefix(keyOrPrefix);
         }),
       );
 
