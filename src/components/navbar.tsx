@@ -16,7 +16,7 @@ import { useCallback, useContext } from "react";
 import { Input } from "./ui/input";
 
 export default function Navbar() {
-  const { bucketName, storageClass, setStorageClass } =
+  const { setThemeMode, bucketName, storageClass, setStorageClass } =
     useContext(GlobalContext);
 
   const onRefresh = useCallback(() => {
@@ -24,8 +24,8 @@ export default function Navbar() {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    document.body.classList.toggle("dark");
-  }, []);
+    setThemeMode((themeMode) => (themeMode === "dark" ? "light" : "dark"));
+  }, [setThemeMode]);
 
   return (
     <header className="w-full border-b bg-background">
