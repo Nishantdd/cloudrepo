@@ -1,7 +1,7 @@
 import { env } from "@/env.ts";
-import type { StorageClass } from "@/types/s3";
+import { type StorageClass, storageClasses } from "@/types/s3";
 import type { ReactNode } from "react";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const GlobalContext = createContext<{
   bucketName: string;
@@ -18,7 +18,15 @@ type ProviderProps = {
 };
 
 export const GlobalContextProvider = ({ children }: ProviderProps) => {
-  const [storageClass, setStorageClass] = useState<StorageClass>("STANDARD");
+  const [storageClass, setStorageClass] = useState<StorageClass>(() => {
+    const storageClass = localStorage.getItem("storageClass") || "STANDARD";
+    return storageClasses.find((sc) => sc === storageClass) || "STANDARD";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("storageClass", storageClass);
+  }, [storageClass]);
+
   return (
     <GlobalContext.Provider
       value={{
