@@ -1,14 +1,24 @@
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { GlobalContext } from "@/context/GlobalContext";
+import { storageClasses } from "@/types/s3";
+import type { StorageClass } from "@/types/s3";
 import { Moon, RefreshCcw } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
+import { Input } from "./ui/input";
 
-type NavbarProps = {
-  bucketName?: string;
-};
+export default function Navbar() {
+  const { bucketName, storageClass, setStorageClass } =
+    useContext(GlobalContext);
 
-export default function Navbar({
-  bucketName = "No bucket found",
-}: NavbarProps) {
   const onRefresh = useCallback(() => {
     window.location.reload();
   }, []);
@@ -34,10 +44,41 @@ export default function Navbar({
           <span className="font-medium text-foreground">cloudrepo</span>
         </div>
 
-        <div className="flex-1 px-4">
-          <p className="text-center text-sm text-muted-foreground">
-            {bucketName}
-          </p>
+        <div className="w-full max-w-xs space-y-2">
+          <div className="flex rounded-md shadow-xs">
+            <Input
+              type="text"
+              placeholder="Bucket name"
+              defaultValue={bucketName}
+              readOnly
+              className="read-only:bg-muted -me-px rounded-e-none shadow-none focus-visible:z-1"
+            />
+            <Select
+              defaultValue="STANDARD"
+              value={storageClass}
+              onValueChange={(value: string) => {
+                setStorageClass(value as StorageClass);
+              }}
+            >
+              <SelectTrigger className="w-[240px] rounded-s-none shadow-none">
+                <SelectValue placeholder="Select storage class" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Storage Class</SelectLabel>
+                  {storageClasses.map((sc) => (
+                    <SelectItem
+                      key={sc}
+                      value={sc}
+                      className="pr-2 [&_svg]:hidden"
+                    >
+                      {sc}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">

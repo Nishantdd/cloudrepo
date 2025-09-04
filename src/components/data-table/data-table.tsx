@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {
   type ColumnDef,
@@ -62,6 +62,7 @@ import {
 import type { ObjectItem } from "@/types/s3";
 import JSZip from "jszip";
 import deleteS3ObjectsWithAPrefix from "@/api/deleteS3ObjectsFromPrefix";
+import { GlobalContext } from "@/context/GlobalContext";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -76,6 +77,8 @@ export function DataTable<TData, TValue>({
   path,
   updateData,
 }: DataTableProps<TData, TValue>) {
+  const { storageClass } = useContext(GlobalContext);
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -130,7 +133,7 @@ export function DataTable<TData, TValue>({
             addMessage: `Uploading ${file.name}`,
           }));
           try {
-            await uploadFileToS3(path, file);
+            await uploadFileToS3(path, file, storageClass);
           } catch (err) {
             console.error("File upload failed:", file.name, err);
           }
@@ -156,7 +159,7 @@ export function DataTable<TData, TValue>({
             addMessage: `Uploading ${file.name}`,
           }));
           try {
-            await uploadFileToS3(path, file);
+            await uploadFileToS3(path, file, storageClass);
           } catch (err) {
             console.error("Folder file upload failed:", file.name, err);
           }

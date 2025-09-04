@@ -1,10 +1,15 @@
 import { env } from "@/env";
 import { s3Client } from "@/lib/s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import type { StorageClass } from "@/types/s3";
+import {
+  PutObjectCommand,
+  type PutObjectCommandInput,
+} from "@aws-sdk/client-s3";
 
 export default async function uploadFileToS3(
   path: string,
   file: File,
+  storageClass: StorageClass,
 ): Promise<string> {
   const bucketName = env.VITE_BUCKET_NAME;
 
@@ -18,10 +23,11 @@ export default async function uploadFileToS3(
     key = path.length === 0 ? file.name : `${path}/${file.name}`;
   }
 
-  const params = {
+  const params: PutObjectCommandInput = {
     Bucket: bucketName,
     Key: key,
     Body: new Uint8Array(await file.arrayBuffer()),
+    StorageClass: storageClass,
     ContentType: file.type || "application/octet-stream",
   };
 
