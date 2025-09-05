@@ -10,17 +10,19 @@ export const Route = createRootRoute({
       <GlobalContextProvider>
         <Navbar />
         <Outlet />
-        <TanstackDevtools
-          config={{
-            position: "bottom-left",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        {import.meta.env.DEV && (
+          <TanstackDevtools
+            config={{
+              position: "bottom-left",
+            }}
+            plugins={[
+              {
+                name: "Tanstack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        )}
       </GlobalContextProvider>
     </>
   ),
