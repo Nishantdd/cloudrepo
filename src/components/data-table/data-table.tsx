@@ -33,11 +33,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import createEmptyFolder from "@/api/createEmptyFolder";
 import deleteS3Object from "@/api/deleteS3Object";
 import deleteS3ObjectsWithAPrefix from "@/api/deleteS3ObjectsFromPrefix";
 import getS3Blob from "@/api/getS3Blob";
 import uploadFileToS3 from "@/api/uploadFileToS3";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -95,6 +104,9 @@ export function DataTable<TData, TValue>({
     downloadMessage: "",
     deleteMessage: "",
   });
+
+  const [emptyFolderDialogOpen, setEmptyFolderDialogOpen] = useState(false);
+  const [emptyFolderName, setEmptyFolderName] = useState("");
 
   const table = useReactTable({
     data,
@@ -169,6 +181,15 @@ export function DataTable<TData, TValue>({
       }
     };
     input.click();
+  };
+
+  const handleCreateEmptyFolder = async () => {
+    if (emptyFolderName) {
+      setEmptyFolderDialogOpen(false);
+      await createEmptyFolder(path, emptyFolderName);
+      setEmptyFolderName("");
+      await updateData();
+    }
   };
 
   const downloadSelectedItems = async () => {
@@ -347,6 +368,10 @@ export function DataTable<TData, TValue>({
               <DropdownMenuItem onSelect={handleAddFolders}>
                 <Folder />
                 Folder
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setEmptyFolderDialogOpen(true)}>
+                <Folder />
+                Empty Folder
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -543,6 +568,43 @@ export function DataTable<TData, TValue>({
           </Pagination>
         </div>
       </div>
+
+      <Dialog
+        open={emptyFolderDialogOpen}
+        onOpenChange={setEmptyFolderDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Empty Folder</DialogTitle>
+            <DialogDescription>
+              Enter the name of the folder you want to create.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <Input
+              placeholder="Folder name"
+              value={emptyFolderName}
+              onChange={(e) => setEmptyFolderName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCreateEmptyFolder();
+                }
+              }}
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setEmptyFolderDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleCreateEmptyFolder}>Create Folder</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
