@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import deleteS3Object from "@/api/deleteS3Object";
+import deleteS3ObjectsWithAPrefix from "@/api/deleteS3ObjectsFromPrefix";
 import getS3Blob from "@/api/getS3Blob";
 import uploadFileToS3 from "@/api/uploadFileToS3";
 import { Button } from "@/components/ui/button";
@@ -59,10 +60,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { GlobalContext } from "@/context/GlobalContext";
 import type { ObjectItem } from "@/types/s3";
 import JSZip from "jszip";
-import deleteS3ObjectsWithAPrefix from "@/api/deleteS3ObjectsFromPrefix";
-import { GlobalContext } from "@/context/GlobalContext";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -264,8 +264,8 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full space-y-4 mt-4">
-      <div className="flex items-center justify-between">
-        <div className="w-full max-w-xs space-y-2">
+      <div className="flex flex-wrap gap-4 items-center justify-between">
+        <div className="w-full max-w-sm md:max-w-xs space-y-2">
           <div className="flex rounded-md shadow-xs relative">
             <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <Search className="size-4" />

@@ -33,7 +33,7 @@ export default function Navbar() {
         className="mx-4 flex h-14 items-center justify-between px-4"
         aria-label="Main navigation"
       >
-        <div className="flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-1">
           <img
             src="/logo.svg"
             alt="logo"
