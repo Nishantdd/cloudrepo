@@ -65,7 +65,7 @@ export const columns: ColumnDef<ObjectItem>[] = [
                 ? `${prevSearch.path}/${item.name}`
                 : `${item.name}`,
             })}
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 dark:text-blue-400 hover:underline"
           >
             {item.name}/
           </Link>
