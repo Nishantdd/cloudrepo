@@ -200,6 +200,13 @@ export function DataTable<TData, TValue>({
         ? (selectedRows.map((row) => row.original) as ObjectItem[])
         : [];
 
+    const containsFolder = originalRows.some((row) => row.type === "folder");
+    if (containsFolder) {
+      alert("Folder downloads not supported yet");
+      setStateMessage((prev) => ({ ...prev, downloadMessage: "" }));
+      return;
+    }
+
     try {
       const entries = await Promise.all(
         originalRows.map(async (item) => {
